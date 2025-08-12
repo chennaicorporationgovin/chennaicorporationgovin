@@ -1,3 +1,74 @@
+/* ---------- Certificate Page Styles ---------- */
+.cert-head {
+  text-align: center;
+  font-family: "Times New Roman", serif;
+  margin-top: 20px;
+}
+
+.top-logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.top-logos img {
+  height: 64px;
+  object-fit: contain;
+}
+
+.cert-head h2 {
+      display: block;
+    font-size: 1.5em;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    unicode-bidi: isolate;
+}
+
+.cert-head h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 6px 0 16px 0;
+}
+
+.big-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Grid Layout */
+.bc-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 8px;
+    margin-left: 30px;
+    font-family: "Times New Roman", serif;
+    font-size: 16px;
+    /* line-height: 1.6; */
+    width: 914px;
+}
+
+/* Labels and Values */
+.bc-grid .label {
+  font-weight: normal;
+  text-align: left;
+}
+
+.bc-grid .value {
+  text-align: left;
+  content: " :";
+}
+
+/* Optional: make : colon consistent */
+.bc-grid .label::after {
+  
+  margin-left: 2px;
+}
 :root {
   --accent: #222;
   --muted: #666;
@@ -48,3 +119,26 @@ body {
   text-align: center;
 }
 #qrcode canvas { border: 1px solid #ddd; padding: 8px; background: #fff; }
+
+.bc-grid {
+  display: grid;
+  grid-template-columns: auto 10px auto; /* Label | Colon | Value */
+  gap: 6px 4px;
+  width: 70%;
+  margin-left: 30px;
+  font-family: "Times New Roman", serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.bc-grid .label {
+  text-align: left;
+}
+
+.bc-grid .colon {
+  text-align: center;
+}
+
+.bc-grid .value {
+  text-align: left;
+}
