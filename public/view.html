@@ -6,61 +6,57 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="/styles.css" />
   <style>
-    /* Overriding / additional styles to match the screenshot layout exactly */
-    .certificate {
-      max-width: 1100px;
-      margin: 40px auto;
-      font-family: "Times New Roman", Georgia, serif;
-      color: #000;
-    }
     .cert-head {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .cert-head h2 { margin: 0; font-size: 24px; font-weight:700; letter-spacing:0.5px; }
-    .cert-head h3 { margin: 6px 0 16px 0; font-size:18px; font-weight:700; }
-    .bc-grid {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      column-gap: 30px;
-      row-gap: 10px;
-      align-items: start;
-    }
+  text-align: center;
+  font-family: "Times New Roman", serif;
+}
 
-    .label {
-      text-align: left;
-      padding-left: 6px;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-    .value {
-      font-size: 14px;
-      padding-left: 4px;
-    }
-    .label::after { content: ":"; margin-left: 6px; }
-    .big-title {
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 12px;
-      font-size: 20px;
-    }
+.top-logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-    /* mimic the left / right spacing from screenshot */
-    .container-inline {
-      display:flex;
-      justify-content:center;
-      margin-bottom:20px;
-    }
+.top-logos img {
+  height: 64px;
+  object-fit: contain;
+}
+
+.cert-head h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.cert-head h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 6px 0 16px 0;
+}
+
+.big-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
   </style>
 </head>
 <body>
   <div class="certificate">
-    <div class="cert-head">
-      <div style="height:64px"></div>
-      <h2>GREATER CHENNAI CORPORATION</h2>
-      <h3>DEPARTMENT OF PUBLIC HEALTH</h3>
-      <div class="big-title">BIRTH CERTIFICATE</div>
+  <div class="cert-head">
+    <div class="top-logos">
+      <img src="left-logo.png" alt="Left Logo">
+      <img src="gcclogo.png" alt="Center Logo">
+      <img src="right-logo.png" alt="Right Logo">
     </div>
+    <h2>GREATER CHENNAI CORPORATION</h2>
+    <h3>DEPARTMENT OF PUBLIC HEALTH</h3>
+    <div class="big-title">BIRTH CERTIFICATE</div>
+  </div>
+
 
     <div id="content" class="bc-grid" aria-live="polite">
       <!-- Pairs will be injected here -->
