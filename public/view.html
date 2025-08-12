@@ -4,80 +4,40 @@
   <meta charset="utf-8" />
   <title>Birth Certificate</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="stylesheet" href="/styles.css" />
-  <style>
-    .cert-head {
-  text-align: center;
-  font-family: "Times New Roman", serif;
-}
-
-.top-logos {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.top-logos img {
-  height: 64px;
-  object-fit: contain;
-}
-
-.cert-head h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: 0.5px;
-}
-
-.cert-head h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 6px 0 16px 0;
-}
-
-.big-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-  </style>
+<link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <div class="certificate">
-  <div class="cert-head">
-    <div class="top-logos">
-      <img src="left-logo.png" alt="Left Logo">
-      <img src="gcclogo.png" alt="Center Logo">
-      <img src="right-logo.png" alt="Right Logo">
+    <div class="cert-head">
+      <div class="top-logos">
+        <img src="/left-logo.png" alt="Left Logo">
+        <img src="/gcclogo.png" alt="Center Logo">
+        <img src="/right-logo.png" alt="Right Logo">
+      </div>
+      <h2>GREATER CHENNAI CORPORATION</h2>
+      <h2>DEPARTMENT OF PUBLIC HEALTH</h2>
+      <div class="big-title">BIRTH CERTIFICATE</div>
     </div>
-    <h2>GREATER CHENNAI CORPORATION</h2>
-    <h3>DEPARTMENT OF PUBLIC HEALTH</h3>
-    <div class="big-title">BIRTH CERTIFICATE</div>
-  </div>
 
+    <div class="bc-grid">
+<div class="label">CNo</div><div class="colon">:</div><div class="value" id="CNo"></div>
+<div class="label">Zone</div><div class="colon">:</div><div class="value" id="Zone"></div>
+<div class="label">Division</div><div class="colon">:</div><div class="value" id="Division"></div>
+<div class="label">Name</div><div class="colon">:</div><div class="value" id="Name"></div>
+<div class="label">Sex</div><div class="colon">:</div><div class="value" id="Sex"></div>
+<div class="label">DOB</div><div class="colon">:</div><div class="value" id="DOB"></div>
+<div class="label">Place of Birth</div><div class="colon">:</div><div class="value" id="PlaceOfBirth"></div>
+<div class="label">Fathername</div><div class="colon">:</div><div class="value" id="Fathername"></div>
+<div class="label">Mothername</div><div class="colon">:</div><div class="value" id="Mothername"></div>
+<div class="label">Permanent Address</div><div class="colon">:</div><div class="value" id="PermanentAddress"></div>
+<div class="label">Birth of Address</div><div class="colon">:</div><div class="value" id="BirthOfAddress"></div>
+<div class="label">Registration No.</div><div class="colon">:</div><div class="value" id="RegistrationNo"></div>
+<div class="label">Date of Reg.</div><div class="colon">:</div><div class="value" id="DateOfReg"></div>
 
-    <div id="content" class="bc-grid" aria-live="polite">
-      <!-- Pairs will be injected here -->
-      <div class="label">CNo</div><div class="value" id="CNo"></div>
-      <div class="label">Zone</div><div class="value" id="Zone"></div>
-      <div class="label">Division</div><div class="value" id="Division"></div>
-      <div class="label">Name</div><div class="value" id="Name"></div>
-      <div class="label">Sex</div><div class="value" id="Sex"></div>
-      <div class="label">DOB</div><div class="value" id="DOB"></div>
-      <div class="label">Place of Birth</div><div class="value" id="PlaceOfBirth"></div>
-      <div class="label">Fathername</div><div class="value" id="Fathername"></div>
-      <div class="label">Mothername</div><div class="value" id="Mothername"></div>
-      <div class="label">Permanent Address</div><div class="value" id="PermanentAddress"></div>
-      <div class="label">Birth of Address</div><div class="value" id="BirthOfAddress"></div>
-      <div class="label">Registration No.</div><div class="value" id="RegistrationNo"></div>
-      <div class="label">Date of Reg.</div><div class="value" id="DateOfReg"></div>
     </div>
   </div>
 
   <script>
-    // extract id from URL path /view/:id
     const parts = window.location.pathname.split('/');
     const id = parts[parts.length - 1];
     if (!id) {
@@ -89,7 +49,6 @@
           return r.json();
         })
         .then(data => {
-          // fill fields. If empty, put a dash.
           const fields = ["CNo","Zone","Division","Name","Sex","DOB","PlaceOfBirth","Fathername","Mothername","PermanentAddress","BirthOfAddress","RegistrationNo","DateOfReg"];
           fields.forEach(f => {
             const el = document.getElementById(f);
