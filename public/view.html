@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Birth Certificate</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    /* Overriding / additional styles to match the screenshot layout exactly */
+    .certificate {
+      max-width: 1100px;
+      margin: 40px auto;
+      font-family: "Times New Roman", Georgia, serif;
+      color: #000;
+    }
+    .cert-head {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .cert-head h2 { margin: 0; font-size: 24px; font-weight:700; letter-spacing:0.5px; }
+    .cert-head h3 { margin: 6px 0 16px 0; font-size:18px; font-weight:700; }
+    .bc-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      column-gap: 30px;
+      row-gap: 10px;
+      align-items: start;
+    }
+
+    .label {
+      text-align: left;
+      padding-left: 6px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .value {
+      font-size: 14px;
+      padding-left: 4px;
+    }
+    .label::after { content: ":"; margin-left: 6px; }
+    .big-title {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+
+    /* mimic the left / right spacing from screenshot */
+    .container-inline {
+      display:flex;
+      justify-content:center;
+      margin-bottom:20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="certificate">
+    <div class="cert-head">
+      <div style="height:64px"></div>
+      <h2>GREATER CHENNAI CORPORATION</h2>
+      <h3>DEPARTMENT OF PUBLIC HEALTH</h3>
+      <div class="big-title">BIRTH CERTIFICATE</div>
+    </div>
+
+    <div id="content" class="bc-grid" aria-live="polite">
+      <!-- Pairs will be injected here -->
+      <div class="label">CNo</div><div class="value" id="CNo"></div>
+      <div class="label">Zone</div><div class="value" id="Zone"></div>
+      <div class="label">Division</div><div class="value" id="Division"></div>
+      <div class="label">Name</div><div class="value" id="Name"></div>
+      <div class="label">Sex</div><div class="value" id="Sex"></div>
+      <div class="label">DOB</div><div class="value" id="DOB"></div>
+      <div class="label">Place of Birth</div><div class="value" id="PlaceOfBirth"></div>
+      <div class="label">Fathername</div><div class="value" id="Fathername"></div>
+      <div class="label">Mothername</div><div class="value" id="Mothername"></div>
+      <div class="label">Permanent Address</div><div class="value" id="PermanentAddress"></div>
+      <div class="label">Birth of Address</div><div class="value" id="BirthOfAddress"></div>
+      <div class="label">Registration No.</div><div class="value" id="RegistrationNo"></div>
+      <div class="label">Date of Reg.</div><div class="value" id="DateOfReg"></div>
+    </div>
+  </div>
+
+  <script>
+    // extract id from URL path /view/:id
+    const parts = window.location.pathname.split('/');
+    const id = parts[parts.length - 1];
+    if (!id) {
+      document.getElementById('content').innerText = 'Invalid link';
+    } else {
+      fetch('/api/data/' + encodeURIComponent(id))
+        .then(r => {
+          if (!r.ok) throw new Error('Not found');
+          return r.json();
+        })
+        .then(data => {
+          // fill fields. If empty, put a dash.
+          const fields = ["CNo","Zone","Division","Name","Sex","DOB","PlaceOfBirth","Fathername","Mothername","PermanentAddress","BirthOfAddress","RegistrationNo","DateOfReg"];
+          fields.forEach(f => {
+            const el = document.getElementById(f);
+            if (el) el.textContent = data[f] ? data[f] : '-';
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('content').innerHTML = '<div style="grid-column:1/-1;color:red">Record not found or expired.</div>';
+        });
+    }
+  </script>
+</body>
+</html>

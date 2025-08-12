@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Birth Certificate Form → QR</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/styles.css" />
+  <!-- QR code library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+</head>
+<body>
+  <main class="container">
+    <h1 class="app-title">Birth Certificate — Create & Generate QR</h1>
+
+    <form id="bc-form" class="form-grid">
+      <label> CNo <input name="CNo" required /></label>
+      <label> Zone <input name="Zone" required /></label>
+      <label> Division <input name="Division" required /></label>
+      <label> Name <input name="Name" required /></label>
+      <label> Sex <input name="Sex" required /></label>
+      <label> DOB <input name="DOB" placeholder="DD-MMM-YYYY" required /></label>
+      <label> Place of Birth <input name="PlaceOfBirth" required /></label>
+      <label> Fathername <input name="Fathername" required /></label>
+      <label> Mothername <input name="Mothername" required /></label>
+      <label> Permanent Address <input name="PermanentAddress" required /></label>
+      <label> Birth of Address <input name="BirthOfAddress" /></label>
+      <label> Registration No. <input name="RegistrationNo" required /></label>
+      <label> Date of Reg. <input name="DateOfReg" required /></label>
+
+      <div class="form-actions" style="grid-column: 1 / -1; display:flex; gap:12px;">
+        <button type="submit">Submit & Generate QR</button>
+        <button type="button" id="clear">Clear</button>
+      </div>
+    </form>
+
+    <section id="result" class="result" style="display:none">
+      <p>Scan the QR with your phone or open the link:</p>
+      <div id="qrcode"></div>
+      <p><a id="viewlink" href="#" target="_blank"></a></p>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('bc-form');
+    const result = document.getElementById('result');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const viewlink = document.getElementById('viewlink');
+
+    document.getElementById('clear').addEventListener('click', () => form.reset());
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const obj = {};
+      for (const [k, v] of fd.entries()) obj[k] = v.trim();
+      // POST to backend
+      const resp = await fetch('/api/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(obj)
+      });
+      if (!resp.ok) {
+        alert('Error submitting form');
+        return;
+      }
+      const { url } = await resp.json();
+
+      // show link
+      viewlink.href = url;
+      viewlink.textContent = url;
+
+      // generate QR into qrcodeDiv (clear first)
+      qrcodeDiv.innerHTML = '';
+      QRCode.toCanvas(url, { errorCorrectionLevel: 'H', width: 300 }, function (err, canvas) {
+        if (err) { console.error(err); alert('QR generation failed'); return; }
+        qrcodeDiv.appendChild(canvas);
+      });
+
+      result.style.display = 'block';
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
