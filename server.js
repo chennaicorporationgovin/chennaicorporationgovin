@@ -3,60 +3,81 @@ const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const cors = require('cors');
-const Database = require('better-sqlite3');
+const { Pool } = require('pg');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// SQLite database file (auto-created if not exists)
-const db = new Database('data.db');
+// Connect to Postgres
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL, // Render provides this in environment variables
+  ssl: { rejectUnauthorized: false }          // Required for Render
+});
 
 // Create table if not exists
-db.prepare(`
-  CREATE TABLE IF NOT EXISTS records (
-    id TEXT PRIMARY KEY,
-    data TEXT,
-    createdAt INTEGER
-  )
-`).run();
+(async () => {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS records (
+      id TEXT PRIMARY KEY,
+      data JSONB,
+      createdAt BIGINT
+    )
+  `);
+})();
 
 // Submit form → save record
-app.post('/api/submit', (req, res) => {
-  const data = req.body || {};
-  const id = uuidv4();
-  const createdAt = Date.now();
+app.post('/api/submit', async (req, res) => {
+  try {
+    const data = req.body || {};
+    const id = uuidv4();
+    const createdAt = Date.now();
 
-  db.prepare("INSERT INTO records (id, data, createdAt) VALUES (?, ?, ?)")
-    .run(id, JSON.stringify(data), createdAt);
+    await pool.query(
+      "INSERT INTO records (id, data, createdAt) VALUES ($1, $2, $3)",
+      [id, data, createdAt]
+    );
 
-  const host = req.get('host');
-  const {protocol} = req;
-  const url = `${protocol}://${host}/view/${id}`;
-  res.json({ id, url });
+    const host = req.get('host');
+    const protocol = req.protocol;
+    const url = `${protocol}://${host}/view/${id}`;
+    res.json({ id, url });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 // Fetch record
-app.get('/api/data/:id', (req, res) => {
-  const row = db.prepare("SELECT data FROM records WHERE id = ?").get(req.params.id);
+app.get('/api/data/:id', async (req, res) => {
+  try {
+    const result = await pool.query("SELECT data FROM records WHERE id = $1", [req.params.id]);
 
-  if (!row) {
-    return res.status(404).json({ error: 'Not found' });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    res.json(result.rows[0].data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
   }
-
-  const { data } = row;
-  res.json(JSON.parse(data));
 });
 
 // Delete record manually
-app.delete('/api/data/:id', (req, res) => {
-  const result = db.prepare("DELETE FROM records WHERE id = ?").run(req.params.id);
+app.delete('/api/data/:id', async (req, res) => {
+  try {
+    const result = await pool.query("DELETE FROM records WHERE id = $1", [req.params.id]);
 
-  if (result.changes === 0) {
-    return res.status(404).json({ error: 'Not found' });
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
   }
-
-  res.json({ success: true });
 });
 
 // Serve static files
