@@ -9,21 +9,26 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Connect to Postgres
+// Connect to Postgres (Render provides DATABASE_URL in environment)
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Render provides this in environment variables
-  ssl: { rejectUnauthorized: false }          // Required for Render
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // required for Render
 });
 
 // Create table if not exists
 (async () => {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS records (
-      id TEXT PRIMARY KEY,
-      data JSONB,
-      createdAt BIGINT
-    )
-  `);
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS records (
+        id TEXT PRIMARY KEY,
+        data JSONB,
+        createdAt BIGINT
+      )
+    `);
+    console.log("✅ Database ready");
+  } catch (err) {
+    console.error("❌ Error creating table:", err);
+  }
 })();
 
 // Submit form → save record
@@ -43,7 +48,7 @@ app.post('/api/submit', async (req, res) => {
     const url = `${protocol}://${host}/view/${id}`;
     res.json({ id, url });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error inserting record:", err);
     res.status(500).json({ error: 'Database error' });
   }
 });
@@ -59,7 +64,7 @@ app.get('/api/data/:id', async (req, res) => {
 
     res.json(result.rows[0].data);
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error fetching record:", err);
     res.status(500).json({ error: 'Database error' });
   }
 });
@@ -75,7 +80,7 @@ app.delete('/api/data/:id', async (req, res) => {
 
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error deleting record:", err);
     res.status(500).json({ error: 'Database error' });
   }
 });
@@ -94,4 +99,4 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
